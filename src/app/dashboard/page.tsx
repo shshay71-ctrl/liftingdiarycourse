@@ -1,28 +1,18 @@
-"use client";
-
-import { useState } from "react";
 import { format } from "date-fns";
 import { Dumbbell } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardCalendar } from "./dashboard-calendar";
+import { getWorkoutsForDate } from "@/data/workouts";
 
-const MOCK_WORKOUTS = [
-  {
-    id: 1,
-    name: "Morning Strength Session",
-    exercises: ["Bench Press", "Squat", "Deadlift"],
-    duration: "52 min",
-  },
-  {
-    id: 2,
-    name: "Upper Body Hypertrophy",
-    exercises: ["Overhead Press", "Pull-ups", "Rows"],
-    duration: "45 min",
-  },
-];
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date: dateParam } = await searchParams;
+  const date = dateParam ? new Date(`${dateParam}T00:00:00`) : new Date();
 
-export default function DashboardPage() {
-  const [date, setDate] = useState<Date>(new Date());
+  const workouts = await getWorkoutsForDate(date);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -37,12 +27,7 @@ export default function DashboardPage() {
         {/* Date Picker */}
         <div className="shrink-0">
           <h2 className="text-lg font-semibold mb-4">Select Date</h2>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={(d) => d && setDate(d)}
-            className="rounded-md border"
-          />
+          <DashboardCalendar selectedDate={date} />
         </div>
 
         {/* Workout List */}
@@ -51,24 +36,33 @@ export default function DashboardPage() {
             Workouts for {format(date, "do MMM yyyy")}
           </h2>
 
-          {MOCK_WORKOUTS.length === 0 ? (
+          {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
               <Dumbbell className="size-10 opacity-40" />
               <p>No workouts logged for this date.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {MOCK_WORKOUTS.map((workout) => (
-                <Card key={workout.id}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">{workout.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{workout.exercises.join(" · ")}</span>
-                    <span>{workout.duration}</span>
-                  </CardContent>
-                </Card>
-              ))}
+              {workouts.map((workout) => {
+                const duration =
+                  workout.startedAt && workout.completedAt
+                    ? `${Math.round(
+                        (workout.completedAt.getTime() - workout.startedAt.getTime()) / 60000
+                      )} min`
+                    : null;
+
+                return (
+                  <Card key={workout.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{workout.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{workout.exerciseNames.join(" · ")}</span>
+                      {duration && <span>{duration}</span>}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>
