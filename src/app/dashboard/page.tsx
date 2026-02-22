@@ -31,7 +31,7 @@ export default async function DashboardPage({
         </div>
 
         {/* Workout List */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 max-w-[30rem] space-y-4">
           <h2 className="text-lg font-semibold">
             Workouts for {format(date, "do MMM yyyy")}
           </h2>
@@ -42,7 +42,7 @@ export default async function DashboardPage({
               <p>No workouts logged for this date.</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {workouts.map((workout) => {
                 const duration =
                   workout.startedAt && workout.completedAt
@@ -52,13 +52,13 @@ export default async function DashboardPage({
                     : null;
 
                 return (
-                  <Card key={workout.id}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{workout.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{workout.exerciseNames.join(" · ")}</span>
-                      {duration && <span>{duration}</span>}
+                  <Card key={workout.id} className="py-0">
+                    <CardContent className="flex flex-col px-4 py-6 text-sm gap-1">
+                      <span className="font-medium">{workout.name}</span>
+                      <div className="flex items-center justify-between text-muted-foreground">
+                        <span>{workout.exerciseNames.join(" · ")}</span>
+                        {duration && <span className="shrink-0">{duration}</span>}
+                      </div>
                     </CardContent>
                   </Card>
                 );
