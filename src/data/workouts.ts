@@ -77,3 +77,32 @@ export async function getWorkoutsForDate(date: Date) {
 
   return Array.from(workoutMap.values());
 }
+
+export async function getWorkoutById(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const result = await db
+    .select()
+    .from(workouts)
+    .where(and(eq(workouts.id, id), eq(workouts.userId, userId)))
+    .limit(1);
+
+  return result[0] ?? null;
+}
+
+export async function updateWorkout(id: string, name: string, date: Date) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  await db
+    .update(workouts)
+    .set({ name, date, updatedAt: new Date() })
+    .where(and(eq(workouts.id, id), eq(workouts.userId, userId)));
+}

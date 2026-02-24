@@ -9,7 +9,8 @@
       "mcp__neon__run_sql",
       "mcp__neon__run_sql_transaction",
       "Bash(npx shadcn@latest add:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(cd:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
