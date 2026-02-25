@@ -19,7 +19,7 @@ export default async function DashboardPage({
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Workout Dashboard</h1>
         <p className="text-muted-foreground mt-1">
-          View and manage your workouts by date.
+          View your workouts by date.
         </p>
       </div>
 
