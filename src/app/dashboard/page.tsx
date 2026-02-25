@@ -39,7 +39,7 @@ export default async function DashboardPage({
           {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
               <Dumbbell className="size-10 opacity-40" />
-              <p>No workouts logged for this date.</p>
+              <p>No workouts logged for this date</p>
             </div>
           ) : (
             <div className="space-y-2">
