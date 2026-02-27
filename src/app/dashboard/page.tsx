@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { Dumbbell, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardCalendar } from "./dashboard-calendar";
@@ -39,16 +39,17 @@ export default async function DashboardPage({
           </h2>
 
           {workouts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
-              <Dumbbell className="size-10 opacity-40" />
-              <p>No workouts logged for this date</p>
-              <Button asChild>
-                <Link href="/dashboard/workout/new">
-                  <Plus className="size-4" />
-                  New Workout
-                </Link>
-              </Button>
-            </div>
+            <Card className="py-0">
+              <CardContent className="flex flex-col items-center px-4 py-6 text-sm gap-3">
+                <p className="text-muted-foreground">No workouts logged for this date</p>
+                <Button asChild>
+                  <Link href="/dashboard/workout/new">
+                    <Plus className="size-4" />
+                    New Workout
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
             <div className="space-y-2">
               {workouts.map((workout) => {
