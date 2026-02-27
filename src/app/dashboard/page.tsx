@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { DashboardCalendar } from "./dashboard-calendar";
 import { getWorkoutsForDate } from "@/data/workouts";
 
@@ -41,6 +42,12 @@ export default async function DashboardPage({
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
               <Dumbbell className="size-10 opacity-40" />
               <p>No workouts logged for this date</p>
+              <Button asChild>
+                <Link href="/dashboard/workout/new">
+                  <Plus className="size-4" />
+                  New Workout
+                </Link>
+              </Button>
             </div>
           ) : (
             <div className="space-y-2">
