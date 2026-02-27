@@ -9,6 +9,8 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,35 +35,43 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="h-full dark">
+      <html lang="en" className="h-full" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-full w-full`}
         >
-          <header className="flex justify-end px-6 py-4 gap-2">
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="outline">Sign In</Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button>Sign Up</Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          {children}
-          <footer className="mt-auto border-t border-zinc-800 px-6 py-8 text-sm text-zinc-500">
-            <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p>© {new Date().getFullYear()} Lifting Diary. All rights reserved.</p>
-              <nav className="flex gap-6">
-                <a href="https://example.com" className="hover:text-zinc-300 transition-colors">Company Site</a>
-                <a href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</a>
-                <a href="/terms" className="hover:text-zinc-300 transition-colors">Terms of Service</a>
-                <a href="mailto:support@example.com" className="hover:text-zinc-300 transition-colors">Contact</a>
-              </nav>
-            </div>
-          </footer>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <header className="flex justify-end px-6 py-4 gap-2">
+              <ThemeToggle />
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <Button variant="outline">Sign In</Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button>Sign Up</Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </header>
+            {children}
+            <footer className="mt-auto border-t border-zinc-800 px-6 py-8 text-sm text-zinc-500">
+              <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p>© {new Date().getFullYear()} Lifting Diary. All rights reserved.</p>
+                <nav className="flex gap-6">
+                  <a href="https://example.com" className="hover:text-zinc-300 transition-colors">Company Site</a>
+                  <a href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</a>
+                  <a href="/terms" className="hover:text-zinc-300 transition-colors">Terms of Service</a>
+                  <a href="mailto:support@example.com" className="hover:text-zinc-300 transition-colors">Contact</a>
+                </nav>
+              </div>
+            </footer>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
