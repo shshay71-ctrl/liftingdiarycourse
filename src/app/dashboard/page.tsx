@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { format } from "date-fns";
 import { Dumbbell } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { DashboardCalendar } from "./dashboard-calendar";
 import { getWorkoutsForDate } from "@/data/workouts";
 
@@ -52,15 +53,17 @@ export default async function DashboardPage({
                     : null;
 
                 return (
-                  <Card key={workout.id} className="py-0">
-                    <CardContent className="flex flex-col px-4 py-6 text-sm gap-1">
-                      <span className="font-medium">{workout.name}</span>
-                      <div className="flex items-center justify-between text-muted-foreground">
-                        <span>{workout.exerciseNames.join(" · ")}</span>
-                        {duration && <span className="shrink-0">{duration}</span>}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+                    <Card className="py-0 hover:bg-accent transition-colors cursor-pointer">
+                      <CardContent className="flex flex-col px-4 py-6 text-sm gap-1">
+                        <span className="font-medium">{workout.name}</span>
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>{workout.exerciseNames.join(" · ")}</span>
+                          {duration && <span className="shrink-0">{duration}</span>}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 );
               })}
             </div>
