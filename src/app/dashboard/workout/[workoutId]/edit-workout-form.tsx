@@ -110,9 +110,20 @@ export function EditWorkoutForm({ workoutId, defaultName, defaultDate }: EditWor
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => router.back()}
+            disabled={form.formState.isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" className="flex-1" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
