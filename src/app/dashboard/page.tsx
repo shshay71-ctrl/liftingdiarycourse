@@ -60,7 +60,7 @@ export default async function DashboardPage({
                     : null;
 
                 return (
-                  <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+                  <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="block">
                     <Card className="py-0 hover:bg-accent transition-colors cursor-pointer">
                       <CardContent className="flex flex-col px-4 py-6 text-sm gap-1">
                         <span className="font-medium">{workout.name}</span>
