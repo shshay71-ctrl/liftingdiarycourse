@@ -103,9 +103,20 @@ export function NewWorkoutForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Creating..." : "Create Workout"}
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => router.push("/dashboard")}
+            disabled={form.formState.isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Creating..." : "Create Workout"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
