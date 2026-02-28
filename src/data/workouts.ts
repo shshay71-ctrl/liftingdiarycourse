@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { workouts, workoutExercises, exercises } from "@/db/schema";
 import { eq, and, gte, lt } from "drizzle-orm";
+import { startOfMonth, endOfMonth } from "date-fns";
 import { auth } from "@clerk/nextjs/server";
 
 export async function createWorkout(name: string, date: Date) {
@@ -78,6 +79,27 @@ export async function getWorkoutsForDate(date: Date) {
   return Array.from(workoutMap.values());
 }
 
+export async function getWorkoutDatesForMonth(month: Date): Promise<Date[]> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const rows = await db
+    .select({ date: workouts.date })
+    .from(workouts)
+    .where(
+      and(
+        eq(workouts.userId, userId),
+        gte(workouts.date, startOfMonth(month)),
+        lt(workouts.date, endOfMonth(month)),
+      )
+    );
+
+  return rows.map((r) => r.date);
+}
+
 export async function getWorkoutById(id: string) {
   const { userId } = await auth();
 
@@ -92,6 +114,18 @@ export async function getWorkoutById(id: string) {
     .limit(1);
 
   return result[0] ?? null;
+}
+
+export async function deleteWorkout(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  await db
+    .delete(workouts)
+    .where(and(eq(workouts.id, id), eq(workouts.userId, userId)));
 }
 
 export async function updateWorkout(id: string, name: string, date: Date) {

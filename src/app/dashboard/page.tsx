@@ -4,7 +4,8 @@ import { Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardCalendar } from "./dashboard-calendar";
-import { getWorkoutsForDate } from "@/data/workouts";
+import { WorkoutDeleteButton } from "./workout-delete-button";
+import { getWorkoutsForDate, getWorkoutDatesForMonth } from "@/data/workouts";
 
 export default async function DashboardPage({
   searchParams,
@@ -14,7 +15,10 @@ export default async function DashboardPage({
   const { date: dateParam } = await searchParams;
   const date = dateParam ? new Date(`${dateParam}T00:00:00`) : new Date();
 
-  const workouts = await getWorkoutsForDate(date);
+  const [workouts, workoutDates] = await Promise.all([
+    getWorkoutsForDate(date),
+    getWorkoutDatesForMonth(date),
+  ]);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -25,46 +29,51 @@ export default async function DashboardPage({
         </p>
       </div>
 
-      <div className="flex gap-8 items-start">
-        {/* Date Picker */}
-        <div className="shrink-0">
-          <h2 className="text-lg font-semibold mb-4">Select Date</h2>
-          <DashboardCalendar selectedDate={date} />
-        </div>
+      <div className="max-w-[30rem] space-y-4">
+        <DashboardCalendar selectedDate={date} workoutDates={workoutDates} />
 
-        {/* Workout List */}
-        <div className="flex-1 max-w-[30rem] space-y-4">
+        <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">
             Workouts for {format(date, "do MMM yyyy")}
           </h2>
+          <Button asChild size="icon" className="sm:hidden shrink-0">
+            <Link href={`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`}>
+              <Plus className="size-4" />
+            </Link>
+          </Button>
+          <Button asChild className="hidden sm:inline-flex">
+            <Link href={`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`}>
+              <Plus className="size-4" />
+              New Workout
+            </Link>
+          </Button>
+        </div>
 
-          {workouts.length === 0 ? (
-            <Card className="py-0">
-              <CardContent className="flex flex-col items-center px-4 py-6 text-sm gap-3">
-                <p className="text-muted-foreground">No workouts logged for this date</p>
-                <Button asChild>
-                  <Link href="/dashboard/workout/new">
-                    <Plus className="size-4" />
-                    New Workout
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-2">
-              {workouts.map((workout) => {
-                const duration =
-                  workout.startedAt && workout.completedAt
-                    ? `${Math.round(
-                        (workout.completedAt.getTime() - workout.startedAt.getTime()) / 60000
-                      )} min`
-                    : null;
+        {workouts.length === 0 ? (
+          <Card className="py-0">
+            <CardContent className="px-4 py-6 text-sm text-center text-muted-foreground">
+              No workouts logged for this date
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-2">
+            {workouts.map((workout) => {
+              const duration =
+                workout.startedAt && workout.completedAt
+                  ? `${Math.round(
+                      (workout.completedAt.getTime() - workout.startedAt.getTime()) / 60000
+                    )} min`
+                  : null;
 
-                return (
-                  <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="block">
+              return (
+                <div key={workout.id} className="relative">
+                  <Link href={`/dashboard/workout/${workout.id}`} className="block">
                     <Card className="py-0 hover:bg-accent transition-colors cursor-pointer">
                       <CardContent className="flex flex-col px-4 py-6 text-sm gap-1">
-                        <span className="font-medium">{workout.name}</span>
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{workout.name}</span>
+                          <span className="size-7" />
+                        </div>
                         <div className="flex items-center justify-between text-muted-foreground">
                           <span>{workout.exerciseNames.join(" · ")}</span>
                           {duration && <span className="shrink-0">{duration}</span>}
@@ -72,11 +81,14 @@ export default async function DashboardPage({
                       </CardContent>
                     </Card>
                   </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  <div className="absolute top-1/2 right-4 -translate-y-1/2">
+                    <WorkoutDeleteButton workoutId={workout.id} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

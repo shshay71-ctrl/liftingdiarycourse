@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function NewWorkoutForm() {
+export function NewWorkoutForm({ defaultDate }: { defaultDate: Date }) {
   const router = useRouter();
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -37,7 +37,7 @@ export function NewWorkoutForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      date: new Date(),
+      date: defaultDate,
     },
   });
 
@@ -46,7 +46,7 @@ export function NewWorkoutForm() {
       name: values.name,
       date: values.date.toISOString(),
     });
-    router.push("/dashboard");
+    router.push(`/dashboard?date=${format(values.date, "yyyy-MM-dd")}`);
   }
 
   return (
@@ -107,13 +107,13 @@ export function NewWorkoutForm() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="flex-1"
             onClick={() => router.push("/dashboard")}
             disabled={form.formState.isSubmitting}
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button type="submit" className="flex-1" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Creating..." : "Create Workout"}
           </Button>
         </div>
