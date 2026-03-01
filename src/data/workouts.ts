@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { workouts, workoutExercises, exercises } from "@/db/schema";
 import { eq, and, gte, lt } from "drizzle-orm";
-import { startOfMonth, endOfMonth } from "date-fns";
 import { auth } from "@clerk/nextjs/server";
 
 export async function createWorkout(name: string, date: Date) {
@@ -79,7 +78,7 @@ export async function getWorkoutsForDate(date: Date) {
   return Array.from(workoutMap.values());
 }
 
-export async function getWorkoutDatesForMonth(month: Date): Promise<Date[]> {
+export async function getAllWorkoutDates(): Promise<Date[]> {
   const { userId } = await auth();
 
   if (!userId) {
@@ -89,13 +88,7 @@ export async function getWorkoutDatesForMonth(month: Date): Promise<Date[]> {
   const rows = await db
     .select({ date: workouts.date })
     .from(workouts)
-    .where(
-      and(
-        eq(workouts.userId, userId),
-        gte(workouts.date, startOfMonth(month)),
-        lt(workouts.date, endOfMonth(month)),
-      )
-    );
+    .where(eq(workouts.userId, userId));
 
   return rows.map((r) => r.date);
 }

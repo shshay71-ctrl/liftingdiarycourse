@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -30,6 +30,20 @@ export function DashboardCalendar({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" disabled>
+        <CalendarIcon />
+        {format(selectedDate, "do MMM yyyy")}
+      </Button>
+    );
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,6 +57,7 @@ export function DashboardCalendar({
         <Calendar
           mode="single"
           selected={selectedDate}
+          defaultMonth={selectedDate}
           onSelect={(d) => {
             if (d) {
               router.push(`/dashboard?date=${format(d, "yyyy-MM-dd")}`);
@@ -52,6 +67,18 @@ export function DashboardCalendar({
           modifiers={{ hasWorkout: workoutDates }}
           components={{ DayButton: DayButtonWithDot }}
         />
+        <div className="border-t p-3">
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => {
+              router.push(`/dashboard?date=${format(new Date(), "yyyy-MM-dd")}`);
+              setOpen(false);
+            }}
+          >
+            Today
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );

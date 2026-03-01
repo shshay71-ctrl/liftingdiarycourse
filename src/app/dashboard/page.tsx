@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardCalendar } from "./dashboard-calendar";
 import { WorkoutDeleteButton } from "./workout-delete-button";
-import { getWorkoutsForDate, getWorkoutDatesForMonth } from "@/data/workouts";
+import { getWorkoutsForDate, getAllWorkoutDates } from "@/data/workouts";
 
 export default async function DashboardPage({
   searchParams,
@@ -17,7 +17,7 @@ export default async function DashboardPage({
 
   const [workouts, workoutDates] = await Promise.all([
     getWorkoutsForDate(date),
-    getWorkoutDatesForMonth(date),
+    getAllWorkoutDates(),
   ]);
 
   return (
